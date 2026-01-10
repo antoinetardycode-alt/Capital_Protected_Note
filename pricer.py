@@ -1,19 +1,19 @@
 import numpy as np
 import scipy.stats as scp
+from numba import jit
 
-def run_pricer(S0, r, sigma, T, nominal, P):
+def run_pricer(S0, r, sigma, T, nominal, P, K, d):
 
     # calcul de la Zc
     zc = nominal * np.exp( -r * T)
 
     # calcul du call, on applique la formule de black & scholes & merton afin d'obtenir un prix precis du call de la cpn
-    K = S0
     
-    d1 = (np.log( S0 / K ) + ( r + (sigma**2)/2)*T )/(sigma * np.sqrt(T))
+    d1 = np.log( S0 / K ) + ( r - d + 0.5 * sigma**2)* T /(sigma * np.sqrt(T))
     
     d2 = d1 - sigma * np.sqrt(T)
 
-    Call = S0 * scp.norm.cdf(d1) - scp.norm.cdf(d2) * K * np.exp(-r * T)
+    Call = S0 * np.exp(- d * T) * scp.norm.cdf(d1) - scp.norm.cdf(d2) * K * np.exp(-r * T)
 
     valeur_option = (nominal * P * Call) / S0
     # on additione le prix de l'option et du zero coupon afin d'obtenir le prix de notre CPN aujourd'hui
@@ -21,17 +21,27 @@ def run_pricer(S0, r, sigma, T, nominal, P):
 
     return prix_note
 
-def simulate_index(S0, r, sigma, T, n_simulations): 
-    #on utilise un mouvement brownien géometrique afin d'obtenir des prix positifs (des prix peuvent pas etre negatifs) qui suivent la propriété log normale
-    Z = np.random.randn(n_simulations) 
-    S_T = S0 * np.exp((r - sigma**2/2)*T + sigma*np.sqrt(T)*Z)
-    return S_T
+# Dans pricer.py
+@jit(nopython=True)
+def pricer_montecarlo(S0, r, sigma, T, nominal, P, d, K, n_simulations):
+    drift = (r - d - 0.5 * sigma**2) * T
+    vol_T = sigma * np.sqrt(T)
+    Z = np.random.randn(n_simulations)
+    
+    # Calculs
+    S_T = S0 * np.exp(drift + vol_T * Z)
+    S_T_mirror = S0 * np.exp(drift + vol_T * (-Z))
+    
+    factor = nominal * P / S0
+    
+    # Payoffs
+    payoff_Z = nominal + factor * np.maximum(S_T - K, 0) # On garde celui-ci pour le plot
+    payoff_mirror = nominal + factor * np.maximum(S_T_mirror - K, 0)
+    
+    # Prix (Moyenne Antithétique)
+    prix_pcn = np.exp(-r * T) * np.mean(0.5 * (payoff_Z + payoff_mirror))
+    
+    # RETURN : Prix + Vecteurs pour le dashboard
+    return prix_pcn, S_T, payoff_Z
 
-def run_payoff(S0, S_T, P, nominal): 
-    # Calcul du remboursement : Nominal + (Participation * Performance Positive)
-    # Si perf_sous_jacent < 0, np.maximum prend 0 -> on rend juste le nominal, dans le cas contraire, on recupère le nominal auquel on ajoute la performance du sous jacent, conditionnée par le taux de participation.
-    payoff = np.maximum(nominal, nominal * (1 + P * (S_T - S0)/S0))
-    return payoff 
-
-# La fonction nous retourne le prix du produit aujourd'hui et les prix potentiels du sous jacent a terme
 
