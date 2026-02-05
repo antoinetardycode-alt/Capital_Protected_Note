@@ -43,7 +43,7 @@ payoff_theo = nominal + (nominal * P / S0) * np.maximum(s_range - K, 0)
 ax.plot(s_range, payoff_theo, color='red', linewidth=2, label='Payoff Théorique')
 
 ax.axhline(nominal, color='green', linestyle='--', label='Capital Garanti')
-ax.axvline(K, color='gray', linestyle=':', label=f'Strike ({K:.2f})')&
+ax.axvline(K, color='gray', linestyle=':', label=f'Strike ({K:.2f})')
 ax.set_title(f'Payoff Profile | Capital Protected Note (Maturité {T} ans)', fontsize=12)
 ax.set_xlabel('Spot à maturité ($S_T$)')
 ax.set_ylabel('Payoff (€)')
