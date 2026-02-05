@@ -24,12 +24,6 @@ This repository provides a professional-grade dashboard for structuring and valu
 * **Monte Carlo Engine**: Simulates price paths using **Geometric Brownian Motion (GBM)**.
 * **Payoff Analysis**: Visualizes the note's performance at maturity relative to the underlying's spot price.
 
-
-
-### 3. Scenario & Stress Testing
-* Analysis of **Implied Volatility** smiles and **Interest Rate** shifts.
-* Dynamic adjustment of the **Participation Rate** based on the remaining budget after the Bond Floor purchase.
-
 ---
 
 ##  Mathematical Framework
