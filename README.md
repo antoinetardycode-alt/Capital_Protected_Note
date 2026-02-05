@@ -1,21 +1,36 @@
-# Capital Protected Note (CPN) - Pricing & Simulation Tool
+# Capital Protected Note (CPN) Pricing & Simulation Tool
 
-Ce projet est un outil d'aide à la structuration d'un produit financier à **capital garanti** (CPN) sur l'indice S&P 500.
+## Project Overview
+This repository contains a professional-grade tool for structuring and valuing **100% Capital Protected Notes (CPN)** on the S&P 500 index. The tool allows users to analyze the trade-off between bond floor protection and optionality upside.
 
-## Présentation du Projet
-L'objectif est de valoriser et de simuler le profil de remboursement d'une note structurée combinant :
-1. **Une jambe obligataire** : Un Zéro-Coupon pour assurer la protection du capital à 100%.
-2. **Une jambe optionnelle** : Un Call européen permettant de capter la performance du sous-jacent.
+### Components:
+1. **Bond Leg**: A Zero-Coupon Bond (ZCB) used to guarantee the principal at maturity.
+2. **Option Leg**: A European Call option to capture equity market performance.
 
-## Caractéristiques Techniques
-- **Modèle de Pricing** : Utilisation de la formule analytique de **Black-Scholes-Merton** pour calculer la Fair Value du produit.
-- **Simulation de Risque** : Moteur de simulation de **Monte Carlo** basé sur un Mouvement Brownien Géométrique (GBM).
-- **Analyse de Scénarios** : Possibilité de tester des volatilités extrêmes (Stress-Testing) pour observer la déformation du payoff.
+---
 
-## Installation et Utilisation
-1. **Installation des dépendances** :
-   ```bash
-   pip install -r requirements.txt
-2. **Lancement du programme** :
-   ```bash
-   streamlit run dashboard.py
+## 🛠 Technical Features
+
+### 1. Pricing Engine
+* **Model**: Analytical **Black-Scholes-Merton (1973)** formula used for the Fair Value calculation of the embedded call.
+* **Greeks**: Computation of Delta, Gamma, and Vega to monitor position sensitivity.
+
+### 2. Risk & Simulation
+* **Monte Carlo Engine**: Simulates thousands of price paths using **Geometric Brownian Motion (GBM)**.
+* **Payoff Analysis**: Visual representation of the note's value at maturity relative to the underlying's performance.
+
+
+
+### 3. Stress Testing
+* Scenario analysis for **Implied Volatility** shifts and **Interest Rate** fluctuations to observe the deformation of the product's Fair Value.
+
+---
+
+## Installation & Usage
+
+### Prerequisites
+Ensure you have Python installed. It is recommended to use a virtual environment.
+
+### Step 1: Install Dependencies
+```bash
+pip install -r requirements.txt
